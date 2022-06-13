@@ -1,0 +1,102 @@
+using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Chunk
+{
+    public Dictionary<string, Block> blocks = new Dictionary<string, Block> ();
+    public GameObject chunkObject;
+    public bool isDirty = false;
+    
+    int vertexIndex = 0;
+    List<Vector3> vertices = new List<Vector3> ();
+    List<int> triangles = new List<int> ();
+    List<Vector2> uvs = new List<Vector2> ();
+    List<Vector2> infos = new List<Vector2> ();
+    
+    MeshFilter meshFilter;
+    MeshRenderer meshRenderer;
+    MeshCollider meshCollider;
+
+    World world;
+
+    public Chunk(World world)
+    {
+        this.world = world;
+
+        chunkObject = new GameObject();
+        meshFilter = chunkObject.AddComponent<MeshFilter>();
+        meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+        meshCollider = chunkObject.AddComponent<MeshCollider>();
+
+        meshRenderer.material = world.myMaterial;
+    }
+
+    bool CheckRender(Block b, BlockType type, int faceIndex) {
+        Vector3 l1 = b.rot * BlockType.GetAABBDistance(type, type.centerDistances[faceIndex], Quaternion.Euler(0, 0, 0));
+        Vector3 l2 = b.rot * BlockType.GetAABBDistance(type, -type.centerDistances[faceIndex], Quaternion.Euler(0, 0, 0));
+        Vector3 pos = b.pos + l1 - l2;
+
+        return !(blocks.ContainsKey(pos.ToString()) && blocks[pos.ToString()].rot == b.rot && BlockData.allblocks[b.id].type == BlockData.allblocks[blocks[pos.ToString()].id].type);
+    }
+
+    public void LoadBlockData()
+    {
+        foreach (Block b in blocks.Values) {
+            BlockType type = BlockData.blockTypes[BlockData.allblocks[b.id].type];
+            for (int i = 0; i < type.voxelTris.Count; i += 3) {
+                int faceIndex = i / 3;
+                if (CheckRender(b, type, faceIndex)) {
+                    // encode uv (type + faceIndex * typeNum, texID)
+                    int texID = BlockData.allblocks[b.id].texIDs != null && BlockData.allblocks[b.id].texIDs.Length > faceIndex ? BlockData.allblocks[b.id].texIDs[faceIndex] : 0;
+                    texID = world.texturesID[BlockData.allblocks[b.id].mats[texID]];
+                    Vector2 info = new Vector2(BlockData.allblocks[b.id].type + faceIndex * BlockData.blockTypes.Count, texID);
+                    for (int j = 0; j < 3; j ++) {
+                        vertices.Add(b.rot * type.voxelVerts[type.voxelTris[i+j]] + b.pos);
+                        uvs.Add(type.uvs[type.voxelTris[i+j]]);
+                        infos.Add(info);
+                        triangles.Add(vertexIndex);
+
+                        vertexIndex ++;
+                    }
+                }
+            }
+        }
+    }
+
+    public void CreateMesh()
+    {
+        Mesh mesh = new Mesh();
+
+        mesh.vertices = vertices.ToArray();
+        mesh.uv = uvs.ToArray();
+        mesh.uv2 = infos.ToArray();
+
+        mesh.SetTriangles(triangles, 0);
+
+        mesh.RecalculateNormals();
+
+        meshFilter.mesh = mesh;
+        meshCollider.sharedMesh = meshFilter.mesh;
+
+        isDirty = false;
+    }
+
+    void ClearRender()
+    {
+        vertexIndex = 0;
+        vertices.Clear();
+        triangles.Clear();
+        uvs.Clear();
+        infos.Clear();
+    }
+
+    public void Rerender() {
+        ClearRender();
+        new Thread(new ThreadStart(() => {
+            LoadBlockData();
+            isDirty = true;
+        })).Start();
+    }
+}
