@@ -229,6 +229,7 @@ public class World : MonoBehaviour
                     initList.Enqueue(id);
                 }
             }
+            // render
             if (chunks[id].isDirty) {
                 chunks[id].CreateMesh();
             }

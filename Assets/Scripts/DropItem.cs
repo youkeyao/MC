@@ -48,10 +48,10 @@ public class DropItem : MonoBehaviour
         BlockType type = BlockData.blockTypes[BlockData.allblocks[id].type];
         for (int i = 0; i < type.voxelTris.Count; i += 3) {
             int faceIndex = i / 3;
-            // encode uv (type + faceIndex * typeNum, texID)
+            // encode uv (-1, texID)
             int texID = BlockData.allblocks[id].texIDs != null && BlockData.allblocks[id].texIDs.Length > faceIndex ? BlockData.allblocks[id].texIDs[faceIndex] : 0;
             texID = world.texturesID[BlockData.allblocks[id].mats[texID]];
-            Vector2 info = new Vector2(BlockData.allblocks[id].type + faceIndex * BlockData.blockTypes.Count, texID);
+            Vector2 info = new Vector2(-1, texID);
             for (int j = 0; j < 3; j ++) {
                 vertices.Add(type.voxelVerts[type.voxelTris[i+j]]);
                 uvs.Add(type.uvs[type.voxelTris[i+j]]);

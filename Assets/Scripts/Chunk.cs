@@ -8,11 +8,11 @@ public class Chunk
     public Dictionary<string, Block> blocks = new Dictionary<string, Block> ();
     public GameObject chunkObject;
     public bool isDirty = false;
+    public List<Vector3> vertices = new List<Vector3> ();
+    public List<Vector2> uvs = new List<Vector2> ();
     
     int vertexIndex = 0;
-    List<Vector3> vertices = new List<Vector3> ();
     List<int> triangles = new List<int> ();
-    List<Vector2> uvs = new List<Vector2> ();
     List<Vector2> infos = new List<Vector2> ();
     
     MeshFilter meshFilter;
