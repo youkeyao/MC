@@ -322,7 +322,7 @@ public static class BlockData
         ),
     };
 
-    public static List<BlockInfo> allblocks = new List<BlockInfo> {
+    public static List<BlockInfo> allBlocks = new List<BlockInfo> {
         new BlockInfo(0, "preview/preview_dirt", new string[] {
             "block/dirt"
         }),

@@ -2,6 +2,7 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Obi;
 
 public class Chunk
 {
@@ -18,6 +19,7 @@ public class Chunk
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
+    ObiCollider obiCollider;
 
     World world;
 
@@ -38,20 +40,20 @@ public class Chunk
         Vector3 l2 = b.rot * BlockType.GetAABBDistance(type, -type.centerDistances[faceIndex], Quaternion.Euler(0, 0, 0));
         Vector3 pos = b.pos + l1 - l2;
 
-        return !(blocks.ContainsKey(pos.ToString()) && blocks[pos.ToString()].rot == b.rot && BlockData.allblocks[b.id].type == BlockData.allblocks[blocks[pos.ToString()].id].type);
+        return !(blocks.ContainsKey(pos.ToString()) && blocks[pos.ToString()].rot == b.rot && BlockData.allBlocks[b.id].type == BlockData.allBlocks[blocks[pos.ToString()].id].type);
     }
 
     public void LoadBlockData()
     {
         foreach (Block b in blocks.Values) {
-            BlockType type = BlockData.blockTypes[BlockData.allblocks[b.id].type];
+            BlockType type = BlockData.blockTypes[BlockData.allBlocks[b.id].type];
             for (int i = 0; i < type.voxelTris.Count; i += 3) {
                 int faceIndex = i / 3;
                 if (CheckRender(b, type, faceIndex)) {
                     // encode uv (type + faceIndex * typeNum, texID)
-                    int texID = BlockData.allblocks[b.id].texIDs != null && BlockData.allblocks[b.id].texIDs.Length > faceIndex ? BlockData.allblocks[b.id].texIDs[faceIndex] : 0;
-                    texID = world.texturesID[BlockData.allblocks[b.id].mats[texID]];
-                    Vector2 info = new Vector2(BlockData.allblocks[b.id].type + faceIndex * BlockData.blockTypes.Count, texID);
+                    int texID = BlockData.allBlocks[b.id].texIDs != null && BlockData.allBlocks[b.id].texIDs.Length > faceIndex ? BlockData.allBlocks[b.id].texIDs[faceIndex] : 0;
+                    texID = world.texturesID[BlockData.allBlocks[b.id].mats[texID]];
+                    Vector2 info = new Vector2(BlockData.allBlocks[b.id].type + faceIndex * BlockData.blockTypes.Count, texID);
                     for (int j = 0; j < 3; j ++) {
                         vertices.Add(b.rot * type.voxelVerts[type.voxelTris[i+j]] + b.pos);
                         uvs.Add(type.uvs[type.voxelTris[i+j]]);
@@ -81,6 +83,7 @@ public class Chunk
         meshCollider.sharedMesh = meshFilter.mesh;
 
         isDirty = false;
+        obiCollider = chunkObject.AddComponent<ObiCollider>();
     }
 
     void ClearRender()

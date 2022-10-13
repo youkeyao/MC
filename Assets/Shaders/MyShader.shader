@@ -23,6 +23,7 @@ Shader "Custom/MyShader"
             
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
+            #include "UnityLightingCommon.cginc"
 
             struct vData
             {
@@ -62,21 +63,22 @@ Shader "Custom/MyShader"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 color = UNITY_SAMPLE_TEX2DARRAY(_TextureArray, fixed3(i.uv, i.id.y));
+                // drop item
                 if (i.id.x < 0) {
                     return color;
                 }
                 
-                float4 lightColor = float4(1, 1, 1, 1);
+                float4 lightColor = _LightColor0;
 
                 fixed3 lightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
                 fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
 
                 fixed3 albedo = color.rgb;
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
-                 fixed3 diffuse = lightColor.rgb * albedo * max(0, dot(i.normal, lightDir));
+                fixed3 diffuse = lightColor.rgb * albedo * max(0, dot(i.normal, lightDir));
 
                 fixed3 halfDir = normalize(lightDir + viewDir);
-                 fixed3 specular = lightColor.rgb * _Specular.rgb * pow(max(0, dot(i.normal, halfDir)), _Gloss);
+                fixed3 specular = lightColor.rgb * _Specular.rgb * pow(max(0, dot(i.normal, halfDir)), _Gloss);
             
                 UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos.xyz);
                 return fixed4(ambient + (diffuse + specular) * atten, 1.0);
@@ -124,7 +126,7 @@ Shader "Custom/MyShader"
             
             v2f vert(vData v)
             {
-                 v2f o;
+                v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.normal = v.normal;
                 o.uv = v.uv;
@@ -142,7 +144,7 @@ Shader "Custom/MyShader"
                     return color;
                 }
                 
-                float4 lightColor = float4(1, 1, 1, 1);
+                float4 lightColor = _LightColor0;
 
                 fixed3 lightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
                 fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
@@ -151,8 +153,8 @@ Shader "Custom/MyShader"
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
                 fixed3 diffuse = lightColor.rgb * albedo * max(0, dot(i.normal, lightDir));
                  
-                 fixed3 halfDir = normalize(lightDir + viewDir);
-                 fixed3 specular = lightColor.rgb * _Specular.rgb * pow(max(0, dot(i.normal, halfDir)), _Gloss);
+                fixed3 halfDir = normalize(lightDir + viewDir);
+                fixed3 specular = lightColor.rgb * _Specular.rgb * pow(max(0, dot(i.normal, halfDir)), _Gloss);
             
                 UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos.xyz);
  

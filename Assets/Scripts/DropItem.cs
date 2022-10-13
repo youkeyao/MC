@@ -27,7 +27,6 @@ public class DropItem : MonoBehaviour
             if (speed > maxSpeed) speed = maxSpeed;
             Vector3 distance = player.position - this.transform.position + Vector3.up;
             if (distance.magnitude < 0.5f) {
-                print(id);
                 Destroy(this.gameObject);
             }
             else {
@@ -45,12 +44,12 @@ public class DropItem : MonoBehaviour
         List<int> triangles = new List<int> ();
         List<Vector2> uvs = new List<Vector2> ();
         List<Vector2> infos = new List<Vector2> ();
-        BlockType type = BlockData.blockTypes[BlockData.allblocks[id].type];
+        BlockType type = BlockData.blockTypes[BlockData.allBlocks[id].type];
         for (int i = 0; i < type.voxelTris.Count; i += 3) {
             int faceIndex = i / 3;
             // encode uv (-1, texID)
-            int texID = BlockData.allblocks[id].texIDs != null && BlockData.allblocks[id].texIDs.Length > faceIndex ? BlockData.allblocks[id].texIDs[faceIndex] : 0;
-            texID = world.texturesID[BlockData.allblocks[id].mats[texID]];
+            int texID = BlockData.allBlocks[id].texIDs != null && BlockData.allBlocks[id].texIDs.Length > faceIndex ? BlockData.allBlocks[id].texIDs[faceIndex] : 0;
+            texID = world.texturesID[BlockData.allBlocks[id].mats[texID]];
             Vector2 info = new Vector2(-1, texID);
             for (int j = 0; j < 3; j ++) {
                 vertices.Add(type.voxelVerts[type.voxelTris[i+j]]);

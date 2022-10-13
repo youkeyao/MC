@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public Vector3 handOffset = new Vector3(0, 0, 0);
     public float speed = 6.0f;
     public float turnSpeed = 1.0f;
     public float jumpSpeed = 8.0f;
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour
     public GameObject dropItem;
     public World world;
     public GameObject shortcut;
+    public GameObject molecular;
 
     float xRotation = 0.0f;
     CharacterController controller;
@@ -66,22 +68,31 @@ public class Player : MonoBehaviour
             // action
             // put block
             if (Input.GetAxis("Put") != 0.0f) {
-                if (!isPut) {
-                    isPut = true;
-                    if (canPut) {
-                        // put rotx
-                        if (putStatus == 0) {
-                            putStatus = 1;
+                if (canPut) {
+                    int putId = world.inventory.GetComponent<HandleInventory>().shortcutList[blockIndex];
+
+                    // block
+                    if (world.isBlock(putId)) {
+                        if (!isPut) {
+                            isPut = true;
+                            // put pos
+                            if (putStatus == 0) {
+                                putStatus = 1;
+                            }
+                            // put rot
+                            else if (putStatus == 1) {
+                                putStatus = 2;
+                            }
+                            else {
+                                putStatus = 0;
+                                PutBlock(putId);
+                                rotateAxis = 0;
+                            }
                         }
-                        // put roty
-                        else if (putStatus == 1) {
-                            putStatus = 2;
-                        }
-                        else {
-                            putStatus = 0;
-                            PutBlock();
-                            rotateAxis = 0;
-                        }
+                    }
+                    // liquid
+                    else {
+                        PutLiquid();
                     }
                 }
             }
@@ -153,7 +164,7 @@ public class Player : MonoBehaviour
         shortcut.GetComponent<RectTransform>().anchoredPosition = tmp;
     }
 
-    void PutBlock()
+    void PutBlock(int id)
     {
         Vector3 pos = putBlock.transform.position;
         Quaternion rot = putBlock.transform.rotation;
@@ -162,6 +173,12 @@ public class Player : MonoBehaviour
         now.Rerender();
         blockIndex = -1;
         shortcut.SetActive(false);
+    }
+
+    void PutLiquid()
+    {
+        GameObject m = GameObject.Instantiate(molecular, Camera.main.transform.position + Camera.main.transform.rotation * handOffset, Camera.main.transform.rotation);
+        m.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 500);
     }
 
     void RemoveBlock()
@@ -213,28 +230,35 @@ public class Player : MonoBehaviour
                 }
 
                 // choose block
-                if (blockIndex != -1) {
+                if (blockIndex > -1) {
                     int putId = world.inventory.GetComponent<HandleInventory>().shortcutList[blockIndex];
-                    BlockType putType = BlockData.blockTypes[BlockData.allblocks[putId].type];
-                    Vector3 faceDistance = BlockType.GetAABBDistance(putType, -hit.normal, selectBlock.transform.rotation);
-                    if (Input.GetAxis("OrderPut") != 0.0f) {
-                        putBlock.transform.position = selectBlock.transform.position - faceDistance;
-                        faceDistance = BlockType.GetAABBDistance(selectType, hit.normal, selectBlock.transform.rotation);
-                        putBlock.transform.position += faceDistance;
-                    }
-                    else {
-                        putBlock.transform.position = hit.point - faceDistance;
-                    }
-                    putBlock.transform.rotation = selectBlock.transform.rotation;
-                    if (putBlock.GetComponent<TriggerStatus>().isTrigger) {
-                        canPut = false;
+
+                    if (world.isBlock(putId)) {
+                        BlockType putType = BlockData.blockTypes[BlockData.allBlocks[putId].type];
+                        Vector3 faceDistance = BlockType.GetAABBDistance(putType, -hit.normal, selectBlock.transform.rotation);
+                        if (Input.GetAxis("OrderPut") != 0.0f) {
+                            putBlock.transform.position = selectBlock.transform.position - faceDistance;
+                            faceDistance = BlockType.GetAABBDistance(selectType, hit.normal, selectBlock.transform.rotation);
+                            putBlock.transform.position += faceDistance;
+                        }
+                        else {
+                            putBlock.transform.position = hit.point - faceDistance;
+                        }
+                        putBlock.transform.rotation = selectBlock.transform.rotation;
+                        if (putBlock.GetComponent<TriggerStatus>().isTrigger) {
+                            canPut = false;
+                        }
+                        else {
+                            canPut = true;
+                        }
+                        putBlock.GetComponent<MeshFilter>().mesh = world.meshes[BlockData.allBlocks[putId].type];
+                        putBlock.GetComponent<MeshCollider>().sharedMesh = world.meshes[BlockData.allBlocks[putId].type];
+                        putBlock.SetActive(true);
                     }
                     else {
                         canPut = true;
+                        putBlock.SetActive(false);
                     }
-                    putBlock.GetComponent<MeshFilter>().mesh = world.meshes[BlockData.allblocks[putId].type];
-                    putBlock.GetComponent<MeshCollider>().sharedMesh = world.meshes[BlockData.allblocks[putId].type];
-                    putBlock.SetActive(true);
                 }
                 else {
                     canPut = false;

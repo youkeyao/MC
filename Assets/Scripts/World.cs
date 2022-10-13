@@ -52,7 +52,7 @@ public class World : MonoBehaviour
         }
 
         // load textures
-        foreach (BlockInfo b in BlockData.allblocks) {
+        foreach (BlockInfo b in BlockData.allBlocks) {
             previews.Add(Resources.Load<Sprite>(b.preview));
             foreach (string p in b.mats) {
                 if (!texturesID.ContainsKey(p)) {
@@ -60,6 +60,9 @@ public class World : MonoBehaviour
                     textures.Add(Resources.Load<Texture2D>(p));
                 }
             }
+        }
+        foreach (LiquidInfo l in LiquidData.allLiquids) {
+            previews.Add(Resources.Load<Sprite>(l.preview));
         }
 
         // load into texture array
@@ -72,6 +75,11 @@ public class World : MonoBehaviour
         // create material
         myMaterial = new Material(Shader.Find("Custom/MyShader"));
         myMaterial.SetTexture("_TextureArray", textureArray);
+    }
+
+    public bool isBlock(int id)
+    {
+        return -1 < id && id < BlockData.allBlocks.Count;
     }
 
     public void GameStart()
