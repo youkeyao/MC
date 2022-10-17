@@ -61,9 +61,11 @@ public class World : MonoBehaviour
                 }
             }
         }
-        foreach (LiquidInfo l in LiquidData.allLiquids) {
-            previews.Add(Resources.Load<Sprite>(l.preview));
-        }
+
+        // load liquid
+        // foreach (LiquidInfo l in LiquidData.allLiquids) {
+        //     previews.Add(Resources.Load<Sprite>(l.preview));
+        // }
 
         // load into texture array
         Texture2DArray textureArray = new Texture2DArray(textures[0].width, textures[0].height, textures.Count, textures[0].format, false, true);
@@ -387,11 +389,11 @@ public class World : MonoBehaviour
             Vector3 pos = new Vector3(id.x * chunkWidth + x, id.y * chunkHeight + heightmap[x, z] + 3, id.z * chunkWidth + z) + new Vector3(0.5f, 0.5f, 0.5f);
             if (flag && !chunk.blocks.ContainsKey(pos.ToString())) {
                 Quaternion rot = Quaternion.Euler(0, r.Next(-45, 45), 0);
-                chunk.blocks.Add(pos.ToString(), new Block(pos, rot, 8));
+                chunk.blocks.Add(pos.ToString(), new Block(pos, rot, 9));
                 pos.y += 1;
-                chunk.blocks.Add(pos.ToString(), new Block(pos, rot, 8));
+                chunk.blocks.Add(pos.ToString(), new Block(pos, rot, 9));
                 pos.y += 1;
-                chunk.blocks.Add(pos.ToString(), new Block(pos, rot, 8));
+                chunk.blocks.Add(pos.ToString(), new Block(pos, rot, 9));
                 chunk.blocks.Add((pos + rot * Vector3.forward).ToString(), new Block(pos + rot * Vector3.forward, rot, 6));
                 chunk.blocks.Add((pos - rot * Vector3.forward).ToString(), new Block(pos - rot * Vector3.forward, rot, 6));
                 chunk.blocks.Add((pos + rot * Vector3.right).ToString(), new Block(pos + rot * Vector3.right, rot, 6));

@@ -67,7 +67,7 @@ namespace Obi{
 
 			MeshCollider meshCollider = collider as MeshCollider;
 
-			if (meshCollider != null){
+			if (meshCollider != null && meshCollider.sharedMesh != null){
 
 				Mesh mesh = meshCollider.sharedMesh;
 				

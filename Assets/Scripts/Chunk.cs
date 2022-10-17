@@ -81,9 +81,10 @@ public class Chunk
 
         meshFilter.mesh = mesh;
         meshCollider.sharedMesh = meshFilter.mesh;
+        if (!obiCollider) obiCollider = chunkObject.AddComponent<ObiCollider>();
+        obiCollider.transform.hasChanged = true;
 
         isDirty = false;
-        obiCollider = chunkObject.AddComponent<ObiCollider>();
     }
 
     void ClearRender()

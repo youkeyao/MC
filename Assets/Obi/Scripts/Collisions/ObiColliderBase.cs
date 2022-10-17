@@ -221,7 +221,9 @@ namespace Obi{
 				if (unityCollider.transform.hasChanged || 
 				    phase != oldPhase ||
 				    thickness != oldThickness || 
-				    unityColliderEnabled != wasUnityColliderEnabled){
+				    unityColliderEnabled != wasUnityColliderEnabled
+				){
+					if (tracker is ObiMeshShapeTracker) (tracker as ObiMeshShapeTracker).UpdateMeshData();
 	
 					unityCollider.transform.hasChanged = false;
 					oldPhase = phase;

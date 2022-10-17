@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Obi;
 
 public class Player : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class Player : MonoBehaviour
     public GameObject dropItem;
     public World world;
     public GameObject shortcut;
-    public GameObject molecular;
+    public ObiEmitter emitter;
 
     float xRotation = 0.0f;
     CharacterController controller;
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
         controller = GetComponent<CharacterController>();
         blockIndex = -1;
         shortcut.SetActive(false);
+        emitter.speed = 0;
     }
 
     void Update()
@@ -68,11 +70,11 @@ public class Player : MonoBehaviour
             // action
             // put block
             if (Input.GetAxis("Put") != 0.0f) {
-                if (canPut) {
+                if (blockIndex > -1) {
                     int putId = world.inventory.GetComponent<HandleInventory>().shortcutList[blockIndex];
 
                     // block
-                    if (world.isBlock(putId)) {
+                    if (canPut && world.isBlock(putId)) {
                         if (!isPut) {
                             isPut = true;
                             // put pos
@@ -91,12 +93,15 @@ public class Player : MonoBehaviour
                         }
                     }
                     // liquid
-                    else {
+                    else if (!world.isBlock(putId)) {
                         PutLiquid();
                     }
                 }
             }
-            else isPut = false;
+            else {
+                isPut = false;
+                emitter.speed = 0;
+            }
             // remove block
             if (Input.GetAxis("Remove") != 0.0f) {
                 if (!isRemove) {
@@ -177,8 +182,7 @@ public class Player : MonoBehaviour
 
     void PutLiquid()
     {
-        GameObject m = GameObject.Instantiate(molecular, Camera.main.transform.position + Camera.main.transform.rotation * handOffset, Camera.main.transform.rotation);
-        m.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 500);
+        emitter.speed = 10;
     }
 
     void RemoveBlock()

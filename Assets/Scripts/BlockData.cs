@@ -242,35 +242,35 @@ public static class BlockData
         ),
         new BlockType(
             new List<Vector3> {
-                new Vector3(-0.25f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f),
-                new Vector3(-0.25f, 0.5f, -0.5f),
+                new Vector3(-0.25f, -0.5f, -0.25f),
+                new Vector3(0.25f, -0.5f, -0.25f),
+                new Vector3(0.25f, 0.5f, -0.25f),
+                new Vector3(-0.25f, 0.5f, -0.25f),
 
-                new Vector3(-0.25f, -0.5f, 0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f),
-                new Vector3(-0.25f, 0.5f, 0.5f),
+                new Vector3(-0.25f, -0.5f, 0.25f),
+                new Vector3(0.25f, -0.5f, 0.25f),
+                new Vector3(0.25f, 0.5f, 0.25f),
+                new Vector3(-0.25f, 0.5f, 0.25f),
 
-                new Vector3(-0.25f, 0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f),
-                new Vector3(-0.25f, 0.5f, 0.5f),
+                new Vector3(-0.25f, 0.5f, -0.25f),
+                new Vector3(0.25f, 0.5f, -0.25f),
+                new Vector3(0.25f, 0.5f, 0.25f),
+                new Vector3(-0.25f, 0.5f, 0.25f),
 
-                new Vector3(-0.25f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(-0.25f, -0.5f, 0.5f),
+                new Vector3(-0.25f, -0.5f, -0.25f),
+                new Vector3(0.25f, -0.5f, -0.25f),
+                new Vector3(0.25f, -0.5f, 0.25f),
+                new Vector3(-0.25f, -0.5f, 0.25f),
 
-                new Vector3(-0.25f, -0.5f, 0.5f),
-                new Vector3(-0.25f, -0.5f, -0.5f),
-                new Vector3(-0.25f, 0.5f, -0.5f),
-                new Vector3(-0.25f, 0.5f, 0.5f),
+                new Vector3(-0.25f, -0.5f, 0.25f),
+                new Vector3(-0.25f, -0.5f, -0.25f),
+                new Vector3(-0.25f, 0.5f, -0.25f),
+                new Vector3(-0.25f, 0.5f, 0.25f),
 
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f),
+                new Vector3(0.25f, -0.5f, 0.25f),
+                new Vector3(0.25f, -0.5f, -0.25f),
+                new Vector3(0.25f, 0.5f, -0.25f),
+                new Vector3(0.25f, 0.5f, 0.25f),
             },
             new List<Vector2> {
                 new Vector2(0.0f, 0.0f),
@@ -349,6 +349,9 @@ public static class BlockData
             "block/acacia_leaves"
         }),
         new BlockInfo(0, "preview/preview_birch_planks", new string[] {
+            "block/birch_planks"
+        }),
+        new BlockInfo(2, "preview/preview_half_birch_planks", new string[] {
             "block/birch_planks"
         }),
         new BlockInfo(0, "preview/preview_birch_log", new string[] {
